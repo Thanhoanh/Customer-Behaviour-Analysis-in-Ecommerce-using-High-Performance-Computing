@@ -12,14 +12,27 @@ cd Customer-Behaviour-Analysis-in-Ecommerce-using-High-Performance-Computing
 docker build -t spark-behavior-analysis -f docker/Dockerfile .
 ```
 
-## Test running Spark cluster locally 
+## Testing
+We run Spark cluster in a testing environment configured in docker-compose.yml
 ```bash
 docker compose -f docker/docker-compose.yml up
 ```
+Check the running containers by running this command: 
+```bash
+docker ps
+```
+
+Enter spark-master:
+```bash
+docker exec -it spark-master bash
+```
+Submit a job on spark-master: 
+```bash
+spark-submit ./scripts/ml.py
+```
 
 ## Initialize Docker Swarm
-We want to deploy Spark cluster on Docker Swarm, we use Virtual Machine and create a cluster with 3 nodes. 
-
+After testing phase, we move on to deploy the production on a distributed systerm on Docker Swarm.
 1. On manager node, run: 
 ```bash
 docker swarm init
@@ -33,6 +46,7 @@ docker swarm join --token SWMTKN-1-5pd8fcltjo0tjc8oqsxza91zwqt4wlerubtslu7at7e64
 docker node ls
 ```
 ## Deploy production on Swarm 
+Next, we will deploy the production on Swarm, which was configured in spark-stack.yml, this is a modified version of docker-compose.yml, which makes the production compatible to run on Swarm distributed system.
 ```bash
 docker stack deploy -c cluster/spark-stack.yml spark-cluster
 ```
