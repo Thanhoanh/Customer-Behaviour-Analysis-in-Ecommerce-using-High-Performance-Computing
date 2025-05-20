@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  spark-master:
+    image: bitnami/spark:3.3
+    environment:
+      - SPARK_MODE=master
+      - SPARK_DAEMON_USER=spark
+      - SPARK_DAEMON_GROUP=spark
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    volumes:
+      - ecommerce-data:/app/data
+    networks:
+      - spark-net
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+  spark-worker:
+    image: bitnami/spark:3.3
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2G
+    volumes:
+      - ecommerce-data:/app/data
+    depends_on:
+      - spark-master
+    networks:
+      - spark-net
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+
+volumes:
+  ecommerce-data:
+    driver: local
+
+networks:
+  spark-net:
+    driver: overlay
+    attachable: true
