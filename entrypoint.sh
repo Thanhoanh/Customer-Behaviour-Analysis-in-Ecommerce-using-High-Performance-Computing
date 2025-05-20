@@ -1,13 +1,16 @@
 #!/bin/bash
 
-# entrypoint.sh
+SPARK_WORKLOAD=$1
 
-# Start Spark master or worker based on environment variable
-if [ "$SPARK_MODE" = "master" ]; then
-    /opt/bitnami/spark/sbin/start-master.sh
-elif [ "$SPARK_MODE" = "worker" ]; then
-    /opt/bitnami/spark/sbin/start-worker.sh $SPARK_MASTER_URL
+echo "SPARK_WORKLOAD: $SPARK_WORKLOAD"
+
+if [ "$SPARK_WORKLOAD" == "master" ];
+then
+  start-master.sh -p 7077
+elif [ "$SPARK_WORKLOAD" == "worker" ];
+then
+  start-worker.sh spark://spark-master:7077
+elif [ "$SPARK_WORKLOAD" == "history" ]
+then
+  start-history-server.sh
 fi
-
-# Keep the container running
-tail -f /dev/null
