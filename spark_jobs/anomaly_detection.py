@@ -1,33 +1,35 @@
 # anomaly_detection.py
-from utils import load_data, compute_rfm, preprocess_features, create_spark_session
+from utils import create_spark_session, load_data, compute_rfm, preprocess_features
 from sklearn.ensemble import IsolationForest
 import numpy as np
 import pandas as pd
 
-def detect_anomalies_with_isolation_forest(df_scaled):
-    df_pd = df_scaled.select("Customer ID", "features").toPandas()
+def detect_anomalies_with_isolation_forest(scaled_df):
+    df_pd = scaled_df.select("Customer ID", "features").toPandas()
     feature_array = np.array(df_pd["features"].tolist())
 
-    iforest = IsolationForest(n_estimators=100, contamination=0.02, random_state=42)
-    df_pd["anomaly"] = iforest.fit_predict(feature_array)
-    df_pd["anomaly_score"] = iforest.decision_function(feature_array)
+    model = IsolationForest(n_estimators=100, contamination=0.02, random_state=42)
+    df_pd["anomaly"] = model.fit_predict(feature_array)
+    df_pd["anomaly_score"] = model.decision_function(feature_array)
 
-    return df_pd  # Trả về Pandas DataFrame
+    return df_pd
 
-def full_pipeline(file_path):
+def main():
     spark = create_spark_session("AnomalyDetection")
-    df = load_data(file_path, spark)
+
+    # 1. Load và xử lý dữ liệu
+    df = load_data(r"C:\Users\ASUS\Downloads\df_cleaned.csv", spark)
     rfm_df = compute_rfm(df)
     scaled_df = preprocess_features(rfm_df)
-    
-    anomaly_df_pd = detect_anomalies_with_isolation_forest(scaled_df)
 
-    # Chuyển đổi lại về Spark DataFrame nếu cần
-    print(anomaly_df_pd[["Customer ID", "anomaly", "anomaly_score"]].head(10))
-    anomaly_df_pd.to_csv("anomaly_result.csv", index=False)
+    # 2. Detect anomaly
+    anomaly_df = detect_anomalies_with_isolation_forest(scaled_df)
+
+    # 3. Hiển thị kết quả
+    print("\nTop 10 khách hàng nghi ngờ là bất thường:")
+    print(anomaly_df[["Customer ID", "anomaly", "anomaly_score"]].head(10))
 
     spark.stop()
 
-# Chạy
 if __name__ == "__main__":
-    full_pipeline(r"C:\Users\ASUS\Downloads\df_cleaned.csv")
+    main()
