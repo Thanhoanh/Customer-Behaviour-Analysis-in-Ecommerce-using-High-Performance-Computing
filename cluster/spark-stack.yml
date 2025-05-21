@@ -1,0 +1,120 @@
+version: '3.8'
+
+# Định nghĩa overlay network
+networks:
+  spark-overlay-net:
+    driver: overlay
+    attachable: true
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24
+          gateway: 10.10.0.1
+
+services:
+  spark-master:
+    image: spark-image
+    networks:
+      - spark-overlay-net
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    entrypoint: ['./entrypoint.sh', 'master']
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - type: bind
+        source: ./scripts
+        target: /opt/spark/scripts
+      - type: bind
+        source: ./data
+        target: /opt/spark/data
+      - type: volume
+        source: spark-logs
+        target: /opt/spark/spark-events
+      - type: bind
+        source: ./warehouse
+        target: /opt/spark/warehouse
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 7077
+        published: 7077
+        protocol: tcp
+        mode: host
+
+  spark-history-server:
+    image: spark-image
+    networks:
+      - spark-overlay-net
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    entrypoint: ['./entrypoint.sh', 'history']
+    depends_on:
+      - spark-master
+    volumes:
+      - type: bind
+        source: ./scripts
+        target: /opt/spark/scripts
+      - type: bind
+        source: ./data
+        target: /opt/spark/data
+      - type: volume
+        source: spark-logs
+        target: /opt/spark/spark-events
+    ports:
+      - target: 18080
+        published: 18080
+        protocol: tcp
+        mode: host
+
+  spark-worker:
+    image: spark-image
+    networks:
+      - spark-overlay-net
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+    entrypoint: ['./entrypoint.sh', 'worker']
+    depends_on:
+      - spark-master
+    volumes:
+      - type: bind
+        source: ./scripts
+        target: /opt/spark/scripts
+      - type: bind
+        source: ./data
+        target: /opt/spark/data
+      - type: volume
+        source: spark-logs
+        target: /opt/spark/spark-events
+
+volumes:
+  spark-logs:
+    driver: local
