@@ -28,7 +28,7 @@ docker exec -it spark-master bash
 ```
 Submit a job on spark-master: 
 ```bash
-spark-submit ./scripts/ml.py
+spark-submit ./spark-jobs/cluster_analysis.py
 ```
 
 ## Initialize Docker Swarm
