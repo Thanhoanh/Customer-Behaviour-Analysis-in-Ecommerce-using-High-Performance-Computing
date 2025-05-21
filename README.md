@@ -9,13 +9,13 @@ cd Customer-Behaviour-Analysis-in-Ecommerce-using-High-Performance-Computing/doc
 ```
 ## Construct a Docker image by running Dockerfile 
 ```bash
-docker build -t spark-image -f docker/Dockerfile .
+docker build -t spark-image -f Dockerfile .
 ```
 
 ## Testing
 We run Spark cluster in a testing environment configured in docker-compose.yml
 ```bash
-docker compose -f docker/docker-compose.yml up
+docker compose -f docker-compose.yml up
 ```
 Check the running containers by running this command: 
 ```bash
