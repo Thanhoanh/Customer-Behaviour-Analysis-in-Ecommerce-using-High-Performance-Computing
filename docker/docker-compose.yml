@@ -67,7 +67,7 @@ services:
     ports:
       - "8889:8889"
     volumes:
-      - ./notebooks:/home/sparkuser/notebooks
+      - ./notebooks:/opt/spark/notebooks
       - spark-logs:/opt/spark/spark-events:rw
     environment:
       PYSPARK_PYTHON: python3
@@ -82,7 +82,7 @@ services:
     depends_on:
       - spark-master
     volumes:
-      - ./spark-jobs:/home/sparkuser/spark-jobs
+      - ./spark-jobs:/opt/spark/spark-jobs
       - spark-logs:/opt/spark/spark-events:rw
     command: ["spark-submit", "/home/sparkuser/spark-jobs/cluster_analysis.py"]
     networks:
