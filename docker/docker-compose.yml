@@ -5,7 +5,7 @@ services:
     user: root
     container_name: spark-master
     build: .
-    image: oanhnguyenlethanh/spark-image:v1.0
+    image: oanhnguyenlethanh/spark-image:v1.1
     command: ["start-master.sh", "-p", "7077"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
@@ -28,7 +28,7 @@ services:
   spark-history-server:
     user: root
     container_name: spark-history
-    image: oanhnguyenlethanh/spark-image:v1.0
+    image: oanhnguyenlethanh/spark-image:v1.1
     command: ["start-history-server.sh"]
     depends_on:
       spark-master:
@@ -45,7 +45,7 @@ services:
   spark-worker:
     user: root
     container_name: spark-worker
-    image: oanhnguyenlethanh/spark-image:v1.0
+    image: oanhnguyenlethanh/spark-image:v1.1
     command: ["start-worker.sh", "spark://spark-master:7077"]
     depends_on:
       spark-master:
