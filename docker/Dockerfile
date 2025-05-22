@@ -21,6 +21,9 @@ ENV SPARK_HOME="/opt/bitnami/spark" \
     PATH="$PATH:$SPARK_HOME/bin" \
     JUPYTER_PORT=8889
 
+RUN mkdir -p ${SPARK_HOME}
+WORKDIR ${SPARK_HOME}
+
 # Copy Spark config
 COPY spark-defaults.conf "$SPARK_HOME/conf/"
 
@@ -28,8 +31,9 @@ COPY spark-defaults.conf "$SPARK_HOME/conf/"
 FROM spark-base AS pyspark
 
 # Copy and set permissions FIRST
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh .
 RUN chmod +x /entrypoint.sh && \
+    [ -f /entrypoint.sh ] || (echo "Error: entrypoint.sh missing!" && exit 1)  # Kiểm tra file tồn tại\
     useradd -m sparkuser
 
 COPY requirements.txt .
@@ -43,7 +47,7 @@ FROM pyspark AS pyspark-runner
 USER sparkuser
 WORKDIR /home/sparkuser
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["pyspark"]
 
 # Stage 4: Optional Jupyter support
