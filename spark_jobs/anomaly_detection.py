@@ -25,9 +25,31 @@ def main():
     # 2. Detect anomaly
     anomaly_df = detect_anomalies_with_isolation_forest(scaled_df)
 
-    # 3. Hiển thị kết quả
+    # 3. Tính toán ngưỡng anomaly_score (min score của nhóm anomaly)
+    anomaly_threshold = anomaly_df.loc[anomaly_df["anomaly"] == -1, "anomaly_score"].min()
+
+    # 4. Tính số lượng và tỷ lệ khách hàng bất thường
+    num_anomalies = (anomaly_df["anomaly"] == -1).sum()
+    total_customers = len(anomaly_df)
+    anomaly_ratio = num_anomalies / total_customers # % tính cho dễ đọc
+
+    # 5. Nối anomaly_df với rfm_df để có đủ thông tin cho thống kê
+    rfm_pd = rfm_df.toPandas()
+    anomaly_full = anomaly_df.merge(rfm_pd, on="Customer ID", how="left")
+
+    # 6. Hiển thị kết quả
+    print(f"\nNgưỡng anomaly_score để bị coi là bất thường: {anomaly_threshold:.5f}")
+    print(f"Số lượng khách hàng bất thường: {num_anomalies}")
+    print(f"Tổng số khách hàng: {total_customers}")
+    print(f"Tỷ lệ khách hàng bất thường: {anomaly_ratio:.2f}%")
+
     print("\nTop 10 khách hàng nghi ngờ là bất thường:")
-    print(anomaly_df[["Customer ID", "anomaly", "anomaly_score"]].head(10))
+    print(anomaly_full[anomaly_full["anomaly"] == -1][["Customer ID", "Recency", "Frequency", "Monetary", "anomaly_score"]]
+          .sort_values("anomaly_score").head(10))
+
+    # 7. Thống kê mô tả cho nhóm khách hàng bất thường
+    print("\nThống kê mô tả cho khách hàng bất thường:")
+    print(anomaly_full[anomaly_full["anomaly"] == -1][["Recency", "Frequency", "Monetary", "anomaly_score"]].describe())
 
     spark.stop()
 
