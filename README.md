@@ -4,7 +4,7 @@
 ## Install
 Clone this repository and navigate to Customer-Behaviour-Analysis-in-Ecommerce-using-High-Performance-Computing folder
 ```bash
-git clone https://github.com/hllj/Vistral-V](https://github.com/Thanhoanh/Customer-Behaviour-Analysis-in-Ecommerce-using-High-Performance-Computing.git
+git clone https://github.com/Thanhoanh/Customer-Behaviour-Analysis-in-Ecommerce-using-High-Performance-Computing.git
 cd Customer-Behaviour-Analysis-in-Ecommerce-using-High-Performance-Computing/docker
 ```
 ## Construct a Docker image by running Dockerfile 
