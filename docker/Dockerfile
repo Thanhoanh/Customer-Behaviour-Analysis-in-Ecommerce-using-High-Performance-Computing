@@ -30,12 +30,6 @@ COPY spark-defaults.conf "$SPARK_HOME/conf/"
 # Stage 2: Install Python dependencies
 FROM spark-base AS pyspark
 
-# Copy and set permissions FIRST
-COPY entrypoint.sh .
-RUN chmod +x /entrypoint.sh && \
-    [ -f /entrypoint.sh ] || (echo "Error: entrypoint.sh missing!" && exit 1)  # Kiểm tra file tồn tại\
-    useradd -m sparkuser
-
 COPY requirements.txt .
 RUN python3 -m pip install --upgrade pip==23.1.2 && \
     pip install --no-cache-dir -r requirements.txt
