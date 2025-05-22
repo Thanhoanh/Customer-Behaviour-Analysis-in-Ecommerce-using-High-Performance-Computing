@@ -1,56 +1,63 @@
+version: "3.8"
+
 services:
   spark-master:
     container_name: spark-master
     build: .
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ['./entrypoint.sh', 'master']
+    entrypoint: ["./entrypoint.sh", "master"]
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 5s
       timeout: 3s
       retries: 3
     volumes:
-      - ./scripts:/opt/spark/scripts
-      - ./data:/opt/spark/data
-      - ./spark-logs:/opt/spark/spark-events
-      - ./warehouse:/opt/spark/warehouse
+      - ./scripts:/opt/spark/scripts:ro
+      - ./data:/opt/spark/data:rw
+      - ./spark-logs:/opt/spark/spark-events:rw
+      - ./warehouse:/opt/spark/warehouse:rw
     env_file:
       - .env.spark
     ports:
-      - '8080:8080' # Spark master Web UI
-      - '7077:7077' # For spark-node-to-spark-node queries
-      - '4040:4040' # Spark worker data
-      - '8889:8889' # Optionaly - Jupyter web UI
+      - "8080:8080"  # Spark Master UI
+      - "7077:7077"  # Spark Master internal port
+    networks:
+      - spark-net
 
   spark-history-server:
     container_name: spark-history
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ['./entrypoint.sh', 'history']
+    entrypoint: ["./entrypoint.sh", "history"]
     depends_on:
-      - spark-master
+      spark-master:
+        condition: service_healthy
     env_file:
       - .env.spark
     volumes:
-      - ./scripts:/opt/spark/scripts
-      - ./data:/opt/spark/data
-      - ./spark-logs:/opt/spark/spark-events
-      - ./warehouse:/opt/spark/warehouse
+      - ./spark-logs:/opt/spark/spark-events:rw
     ports:
-      - '18080:18080'
+      - "18080:18080"  # Spark History Server UI
+    networks:
+      - spark-net
 
   spark-worker:
     container_name: spark-worker
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ['./entrypoint.sh', 'worker']
+    entrypoint: ["./entrypoint.sh", "worker"]
     depends_on:
-      - spark-master
+      spark-master:
+        condition: service_healthy
     env_file:
       - .env.spark
     volumes:
-      - ./scripts:/opt/spark/scripts
-      - ./data:/opt/spark/data
-      - ./spark-logs:/opt/spark/spark-events
-      - ./warehouse:/opt/spark/warehouse
+      - ./data:/opt/spark/data:rw
+      - ./spark-logs:/opt/spark/spark-events:rw
+    networks:
+      - spark-net
+
+networks:
+  spark-net:
+    driver: bridge
 
 volumes:
   spark-logs:
