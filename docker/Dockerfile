@@ -59,4 +59,4 @@ ENV PYSPARK_DRIVER_PYTHON="jupyter" \
     PYSPARK_DRIVER_PYTHON_OPTS="notebook --no-browser --ip=0.0.0.0 --port=${JUPYTER_PORT}"
 
 EXPOSE 8889
-CMD ["jupyter", "notebook",
+CMD ["jupyter", "notebook"]
