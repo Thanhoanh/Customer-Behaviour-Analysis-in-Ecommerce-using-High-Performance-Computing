@@ -71,6 +71,15 @@ services:
       - PYSPARK_DRIVER_PYTHON_OPTS=notebook --no-browser --ip=0.0.0.0 --port=8889
     command: ["jupyter", "notebook", "--no-browser", "--ip=0.0.0.0", "--port=8889"]
 
+    spark-submit:
+    image: your-spark-image
+    container_name: spark-submit
+    depends_on:
+      - spark-master
+    volumes:
+      - ./spark-jobs:/home/sparkuser/spark-jobs
+    command: ["spark-submit", "/home/sparkuser/spark-jobs/cluster_analysis.py"]
+
 networks:
   spark-net:
     driver: bridge
