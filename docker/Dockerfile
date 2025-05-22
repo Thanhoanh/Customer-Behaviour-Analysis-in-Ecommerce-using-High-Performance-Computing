@@ -1,6 +1,9 @@
 # Stage 1: Base image with Spark and essential tools
 FROM bitnami/spark:3.3 AS spark-base
 
+# Switch to root user for package installation
+USER root
+
 # Install system tools and security packages
 RUN mkdir -p /var/lib/apt/lists/partial && \
     apt-get update && \
@@ -56,4 +59,4 @@ ENV PYSPARK_DRIVER_PYTHON="jupyter" \
     PYSPARK_DRIVER_PYTHON_OPTS="notebook --no-browser --ip=0.0.0.0 --port=${JUPYTER_PORT}"
 
 EXPOSE 8889
-CMD ["jupyter", "notebook", "--no-browser", "--ip=0.0.0.0", "--port=8889"]
+CMD ["jupyter", "notebook",
