@@ -84,7 +84,7 @@ services:
     volumes:
       - ./spark-jobs:/opt/spark/spark-jobs
       - spark-logs:/opt/spark/spark-events:rw
-    command: ["spark-submit", "/home/sparkuser/spark-jobs/cluster_analysis.py"]
+    command: ["spark-submit", "/opt/spark/spark-jobs/cluster_analysis.py"]
     networks:
       - spark-net
       
