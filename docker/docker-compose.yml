@@ -3,7 +3,7 @@ services:
     container_name: spark-master
     build: .
     image: catminh/docker-swarm-demo:cm1
-    entrypoint: ['./entrypoint.sh', 'master']
+    entrypoint: ['/entrypoint.sh', 'master']
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
       interval: 5s
