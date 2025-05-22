@@ -4,8 +4,8 @@ services:
   spark-master:
     user: root
     container_name: spark-master
-    build: .
-    image: oanhnguyenlethanh/spark-image:v1.1
+    # build: .
+    image: oanhnguyenlethanh/spark-image:v1.2
     command: ["start-master.sh", "-p", "7077"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
@@ -28,7 +28,7 @@ services:
   spark-history-server:
     user: root
     container_name: spark-history
-    image: oanhnguyenlethanh/spark-image:v1.1
+    image: oanhnguyenlethanh/spark-image:v1.2
     command: ["start-history-server.sh"]
     depends_on:
       spark-master:
@@ -45,7 +45,7 @@ services:
   spark-worker:
     user: root
     container_name: spark-worker
-    image: oanhnguyenlethanh/spark-image:v1.1
+    image: oanhnguyenlethanh/spark-image:v1.2
     command: ["start-worker.sh", "spark://spark-master:7077"]
     depends_on:
       spark-master:
@@ -61,25 +61,33 @@ services:
   spark-jupyter:
     build: .
     container_name: spark-jupyter
+    image: oanhnguyenlethanh/spark-image:v1.2
+    depends_on:
+      - spark-master
     ports:
       - "8889:8889"
     volumes:
       - ./notebooks:/home/sparkuser/notebooks
+      - spark-logs:/opt/spark/spark-events:rw
     environment:
       PYSPARK_PYTHON: python3
       PYSPARK_DRIVER_PYTHON: jupyter
       PYSPARK_DRIVER_PYTHON_OPTS: notebook --no-browser --ip=0.0.0.0 --port=8889
     command: ["jupyter", "notebook", "--no-browser", "--ip=0.0.0.0", "--port=8889"]
-
+    networks:
+      - spark-net
   spark-submit:
-    image: oanhnguyenlethanh/spark-image:v1.1  # Đổi theo image bạn thực sự có
+    image: oanhnguyenlethanh/spark-image:v1.2
     container_name: spark-submit
     depends_on:
       - spark-master
     volumes:
       - ./spark-jobs:/home/sparkuser/spark-jobs
+      - spark-logs:/opt/spark/spark-events:rw
     command: ["spark-submit", "/home/sparkuser/spark-jobs/cluster_analysis.py"]
-
+    networks:
+      - spark-net
+      
 networks:
   spark-net:
     driver: bridge
