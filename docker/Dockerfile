@@ -2,7 +2,8 @@
 FROM bitnami/spark:3.3 AS spark-base
 
 # Install system tools and security packages
-RUN apt-get update && \
+RUN mkdir -p /var/lib/apt/lists/partial && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
         curl \
         vim \
@@ -14,7 +15,8 @@ RUN apt-get update && \
 # Set environment variables
 ENV SPARK_HOME="/opt/bitnami/spark" \
     PYSPARK_PYTHON=python3 \
-    PATH="$PATH:$SPARK_HOME/bin"
+    PATH="$PATH:$SPARK_HOME/bin" \
+    JUPYTER_PORT=8889
 
 # Copy Spark config
 COPY spark-defaults.conf "$SPARK_HOME/conf/"
@@ -50,8 +52,7 @@ RUN pip install --no-cache-dir notebook
 USER sparkuser  # Switch back
 
 # Jupyter configuration
-ENV JUPYTER_PORT=8889 \
-    PYSPARK_DRIVER_PYTHON="jupyter" \
+ENV PYSPARK_DRIVER_PYTHON="jupyter" \
     PYSPARK_DRIVER_PYTHON_OPTS="notebook --no-browser --ip=0.0.0.0 --port=${JUPYTER_PORT}"
 
 EXPOSE 8889
