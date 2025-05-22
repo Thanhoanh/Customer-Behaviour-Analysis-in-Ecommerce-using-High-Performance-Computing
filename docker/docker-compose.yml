@@ -58,6 +58,19 @@ services:
     networks:
       - spark-net
 
+   spark-jupyter:
+    build: .
+    container_name: spark-jupyter
+    ports:
+      - "8889:8889"
+    volumes:
+      - ./notebooks:/home/sparkuser/notebooks
+    environment:
+      - PYSPARK_PYTHON=python3
+      - PYSPARK_DRIVER_PYTHON=jupyter
+      - PYSPARK_DRIVER_PYTHON_OPTS=notebook --no-browser --ip=0.0.0.0 --port=8889
+    command: ["jupyter", "notebook", "--no-browser", "--ip=0.0.0.0", "--port=8889"]
+
 networks:
   spark-net:
     driver: bridge
