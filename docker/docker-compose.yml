@@ -15,7 +15,7 @@ services:
     volumes:
       - ./scripts:/opt/spark/scripts:ro
       - ./data:/opt/spark/data:rw
-      - ./spark-logs:/opt/spark/spark-events:rw
+      - spark-logs:/opt/spark/spark-events:rw
       - ./warehouse:/opt/spark/warehouse:rw
     env_file:
       - .env.spark
@@ -36,7 +36,7 @@ services:
     env_file:
       - .env.spark
     volumes:
-      - ./spark-logs:/opt/spark/spark-events:rw
+      - spark-logs:/opt/spark/spark-events:rw
     ports:
       - "18080:18080"
     networks:
@@ -54,11 +54,11 @@ services:
       - .env.spark
     volumes:
       - ./data:/opt/spark/data:rw
-      - ./spark-logs:/opt/spark/spark-events:rw
+      - spark-logs:/opt/spark/spark-events:rw
     networks:
       - spark-net
 
-   spark-jupyter:
+  spark-jupyter:
     build: .
     container_name: spark-jupyter
     ports:
@@ -66,13 +66,13 @@ services:
     volumes:
       - ./notebooks:/home/sparkuser/notebooks
     environment:
-      - PYSPARK_PYTHON=python3
-      - PYSPARK_DRIVER_PYTHON=jupyter
-      - PYSPARK_DRIVER_PYTHON_OPTS=notebook --no-browser --ip=0.0.0.0 --port=8889
+      PYSPARK_PYTHON: python3
+      PYSPARK_DRIVER_PYTHON: jupyter
+      PYSPARK_DRIVER_PYTHON_OPTS: notebook --no-browser --ip=0.0.0.0 --port=8889
     command: ["jupyter", "notebook", "--no-browser", "--ip=0.0.0.0", "--port=8889"]
 
-    spark-submit:
-    image: your-spark-image
+  spark-submit:
+    image: oanhnguyenlethanh/spark-image:v1.1  # Đổi theo image bạn thực sự có
     container_name: spark-submit
     depends_on:
       - spark-master
