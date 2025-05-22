@@ -3,7 +3,7 @@ services:
     container_name: spark-master
     build: .
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ['entrypoint.sh', 'master']
+    entrypoint: ['./entrypoint.sh', 'master']
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
       interval: 5s
@@ -25,7 +25,7 @@ services:
   spark-history-server:
     container_name: spark-history
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ['entrypoint.sh', 'history']
+    entrypoint: ['./entrypoint.sh', 'history']
     depends_on:
       - spark-master
     env_file:
@@ -41,7 +41,7 @@ services:
   spark-worker:
     container_name: spark-worker
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ['entrypoint.sh', 'worker']
+    entrypoint: ['./entrypoint.sh', 'worker']
     depends_on:
       - spark-master
     env_file:
