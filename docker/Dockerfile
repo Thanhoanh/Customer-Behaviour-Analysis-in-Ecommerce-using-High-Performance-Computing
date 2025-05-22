@@ -38,6 +38,7 @@ RUN python3 -m pip install --upgrade pip==23.1.2 && \
 FROM pyspark AS pyspark-runner
 
 # Create a non-root user for safety
+RUN groupadd -r sparkgroup && useradd -r -g sparkgroup -m -d /home/sparkuser sparkuser
 USER sparkuser
 WORKDIR /home/sparkuser
 
