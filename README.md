@@ -9,7 +9,7 @@ cd Customer-Behaviour-Analysis-in-Ecommerce-using-High-Performance-Computing/doc
 ```
 ## Construct a Docker image by running Dockerfile 
 ```bash
-docker build -t spark-image -f Dockerfile .
+docker build -t  <username>/<image_name>:<tag> .
 ```
 
 ## Testing
