@@ -2,7 +2,7 @@ services:
   spark-master:
     container_name: spark-master
     build: .
-    image: catminh/docker-swarm-demo:cm1
+    image: oanhnguyenlethanh/spark-image:v1.0
     entrypoint: ['entrypoint.sh', 'master']
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
@@ -24,7 +24,7 @@ services:
 
   spark-history-server:
     container_name: spark-history
-    image: catminh/docker-swarm-demo:cm1
+    image: oanhnguyenlethanh/spark-image:v1.0
     entrypoint: ['entrypoint.sh', 'history']
     depends_on:
       - spark-master
@@ -40,7 +40,7 @@ services:
 
   spark-worker:
     container_name: spark-worker
-    image: catminh/docker-swarm-demo:cm1
+    image: oanhnguyenlethanh/spark-image:v1.0
     entrypoint: ['entrypoint.sh', 'worker']
     depends_on:
       - spark-master
