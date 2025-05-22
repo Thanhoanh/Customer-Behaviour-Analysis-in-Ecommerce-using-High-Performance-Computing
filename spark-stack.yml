@@ -12,7 +12,7 @@ networks:
 
 services:
   spark-master:
-    image: spark-image
+    image: catminh/docker-swarm-demo
     networks:
       - spark-overlay-net
     deploy:
@@ -59,7 +59,7 @@ services:
         mode: host
 
   spark-history-server:
-    image: spark-image
+    image: catminh/docker-swarm-demo
     networks:
       - spark-overlay-net
     deploy:
@@ -88,7 +88,7 @@ services:
         mode: host
 
   spark-worker:
-    image: spark-image
+    image: catminh/docker-swarm-demo
     networks:
       - spark-overlay-net
     deploy:
