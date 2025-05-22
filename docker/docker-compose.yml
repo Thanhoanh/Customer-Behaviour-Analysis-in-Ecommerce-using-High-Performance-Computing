@@ -5,7 +5,7 @@ services:
     container_name: spark-master
     build: .
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ["/entrypoint.sh", "master"]
+    command: ["start-master.sh", "-p", "7077"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 5s
@@ -19,15 +19,15 @@ services:
     env_file:
       - .env.spark
     ports:
-      - "8080:8080"  # Spark Master UI
-      - "7077:7077"  # Spark Master internal port
+      - "8080:8080"
+      - "7077:7077"
     networks:
       - spark-net
 
   spark-history-server:
     container_name: spark-history
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ["/entrypoint.sh", "history"]
+    command: ["start-history-server.sh"]
     depends_on:
       spark-master:
         condition: service_healthy
@@ -36,14 +36,14 @@ services:
     volumes:
       - ./spark-logs:/opt/spark/spark-events:rw
     ports:
-      - "18080:18080"  # Spark History Server UI
+      - "18080:18080"
     networks:
       - spark-net
 
   spark-worker:
     container_name: spark-worker
     image: oanhnguyenlethanh/spark-image:v1.0
-    entrypoint: ["/entrypoint.sh", "worker"]
+    command: ["start-worker.sh", "spark://spark-master:7077"]
     depends_on:
       spark-master:
         condition: service_healthy
