@@ -25,7 +25,7 @@ services:
   spark-history-server:
     container_name: spark-history
     image: catminh/docker-swarm-demo:cm1
-    entrypoint: ['./entrypoint.sh', 'history']
+    entrypoint: ['/entrypoint.sh', 'history']
     depends_on:
       - spark-master
     env_file:
@@ -41,7 +41,7 @@ services:
   spark-worker:
     container_name: spark-worker
     image: catminh/docker-swarm-demo:cm1
-    entrypoint: ['./entrypoint.sh', 'worker']
+    entrypoint: ['/entrypoint.sh', 'worker']
     depends_on:
       - spark-master
     env_file:
