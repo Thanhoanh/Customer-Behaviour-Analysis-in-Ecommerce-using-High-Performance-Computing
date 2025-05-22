@@ -59,6 +59,7 @@ services:
       - spark-net
 
   spark-jupyter:
+    user: sparkuser 
     build: .
     container_name: spark-jupyter
     image: oanhnguyenlethanh/spark-image:v1.2
@@ -77,6 +78,7 @@ services:
     networks:
       - spark-net
   spark-submit:
+    user: sparkuser
     image: oanhnguyenlethanh/spark-image:v1.2
     container_name: spark-submit
     depends_on:
