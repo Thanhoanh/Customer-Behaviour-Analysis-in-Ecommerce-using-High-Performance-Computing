@@ -47,7 +47,6 @@ FROM pyspark AS pyspark-runner
 USER sparkuser
 WORKDIR /home/sparkuser
 
-ENTRYPOINT ["./entrypoint.sh"]
 CMD ["pyspark"]
 
 # Stage 4: Optional Jupyter support
