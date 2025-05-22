@@ -27,6 +27,11 @@ COPY spark-defaults.conf "$SPARK_HOME/conf/"
 # Stage 2: Install Python dependencies
 FROM spark-base AS pyspark
 
+# Copy and set permissions FIRST
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh && \
+    useradd -m sparkuser
+
 COPY requirements.txt .
 RUN python3 -m pip install --upgrade pip==23.1.2 && \
     pip install --no-cache-dir -r requirements.txt
@@ -34,12 +39,7 @@ RUN python3 -m pip install --upgrade pip==23.1.2 && \
 # Stage 3: Runtime environment with entrypoint
 FROM pyspark AS pyspark-runner
 
-# Copy and set permissions FIRST
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 # Create a non-root user for safety
-RUN useradd -m sparkuser
 USER sparkuser
 WORKDIR /home/sparkuser
 
