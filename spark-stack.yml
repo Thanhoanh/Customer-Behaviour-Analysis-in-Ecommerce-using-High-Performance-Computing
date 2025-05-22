@@ -8,11 +8,10 @@ networks:
     ipam:
       config:
         - subnet: 10.10.0.0/24
-          gateway: 10.10.0.1
 
 services:
   spark-master:
-    image: catminh/docker-swarm-demo
+    image: catminh/docker-swarm-demo:cm1
     networks:
       - spark-overlay-net
     deploy:
@@ -58,37 +57,8 @@ services:
         protocol: tcp
         mode: host
 
-  spark-history-server:
-    image: catminh/docker-swarm-demo
-    networks:
-      - spark-overlay-net
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-    entrypoint: ['./entrypoint.sh', 'history']
-    depends_on:
-      - spark-master
-    volumes:
-      - type: bind
-        source: ./scripts
-        target: /opt/spark/scripts
-      - type: bind
-        source: ./data
-        target: /opt/spark/data
-      - type: volume
-        source: spark-logs
-        target: /opt/spark/spark-events
-    ports:
-      - target: 18080
-        published: 18080
-        protocol: tcp
-        mode: host
-
   spark-worker:
-    image: catminh/docker-swarm-demo
+    image: catminh/docker-swarm-demo:cm1
     networks:
       - spark-overlay-net
     deploy:
@@ -118,3 +88,9 @@ services:
 volumes:
   spark-logs:
     driver: local
+
+
+
+
+
+https://github.com/Thanhoanh/Customer-Behaviour-Analysis-in-Ecommerce-using-High-Performance-Computing
