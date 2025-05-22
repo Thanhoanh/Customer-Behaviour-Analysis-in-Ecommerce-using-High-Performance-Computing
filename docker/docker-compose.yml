@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   spark-master:
+    user: root
     container_name: spark-master
     build: .
     image: oanhnguyenlethanh/spark-image:v1.0
@@ -25,6 +26,7 @@ services:
       - spark-net
 
   spark-history-server:
+    user: root
     container_name: spark-history
     image: oanhnguyenlethanh/spark-image:v1.0
     command: ["start-history-server.sh"]
@@ -41,6 +43,7 @@ services:
       - spark-net
 
   spark-worker:
+    user: root
     container_name: spark-worker
     image: oanhnguyenlethanh/spark-image:v1.0
     command: ["start-worker.sh", "spark://spark-master:7077"]
