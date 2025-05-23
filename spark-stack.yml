@@ -70,8 +70,6 @@ services:
           cpus: '1'
           memory: 2G
     entrypoint: ["start-worker.sh", "spark://spark-master:7077"]
-    depends_on:
-      - spark-master
     env_file:
       - ./docker/.env.spark
     volumes:
