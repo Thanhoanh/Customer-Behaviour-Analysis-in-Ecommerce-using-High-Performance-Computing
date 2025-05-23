@@ -87,7 +87,7 @@ services:
       - ../spark-jobs:/opt/spark/spark-jobs
       - spark-logs:/opt/spark/spark-events:rw
     command: ["spark-submit", "/opt/spark/spark-jobs/cluster_analysis.py"]
-    env_files:
+    env_file:
       - .env.spark
     networks:
       - spark-net
