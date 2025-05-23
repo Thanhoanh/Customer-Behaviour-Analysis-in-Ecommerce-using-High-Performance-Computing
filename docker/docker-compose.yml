@@ -4,7 +4,6 @@ services:
   spark-master:
     user: root
     container_name: spark-master
-    # build: .
     image: oanhnguyenlethanh/spark-image:v1.2
     command: ["start-master.sh", "-p", "7077"]
     healthcheck:
@@ -13,12 +12,12 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./spark-jobs:/opt/spark/spark-jobs:ro
+      - ./docker/scripts:/opt/spark/scripts:ro
       - ./data:/opt/spark/data:rw
       - spark-logs:/opt/spark/spark-events:rw
       - ./warehouse:/opt/spark/warehouse:rw
     env_file:
-      - ./.env.spark
+      - ./docker/.env.spark
     ports:
       - "8080:8080"
       - "7077:7077"
@@ -34,7 +33,7 @@ services:
       spark-master:
         condition: service_healthy
     env_file:
-      - ./.env.spark
+      - ./docker/.env.spark
     volumes:
       - spark-logs:/opt/spark/spark-events:rw
     ports:
@@ -51,16 +50,16 @@ services:
       spark-master:
         condition: service_healthy
     env_file:
-      - ./.env.spark
+      - ./docker/.env.spark
     volumes:
-      - ../data:/opt/spark/data:rw
+      - ./data:/opt/spark/data:rw
       - spark-logs:/opt/spark/spark-events:rw
     networks:
       - spark-net
 
   spark-jupyter:
-    user: root 
-    build: .
+    user: root
+    # build: ./docker
     container_name: spark-jupyter
     image: oanhnguyenlethanh/spark-image:v1.2
     depends_on:
@@ -72,11 +71,10 @@ services:
       - spark-logs:/opt/spark/spark-events:rw
     environment:
       PYSPARK_PYTHON: python3
-      PYSPARK_DRIVER_PYTHON: jupyter
-      PYSPARK_DRIVER_PYTHON_OPTS: notebook --no-browser --ip=0.0.0.0 --port=8889
-    command: ["jupyter", "notebook", "--no-browser", "--ip=0.0.0.0", "--port=8889"]
+    command: "jupyter notebook --no-browser --ip=0.0.0.0 --port=8889 --allow-root"
     networks:
       - spark-net
+
   spark-submit:
     user: root
     image: oanhnguyenlethanh/spark-image:v1.2
@@ -88,10 +86,10 @@ services:
       - spark-logs:/opt/spark/spark-events:rw
     command: ["spark-submit", "/opt/spark/spark-jobs/cluster_analysis.py"]
     env_file:
-      - ./.env.spark
+      - ./docker/.env.spark
     networks:
       - spark-net
-      
+
 networks:
   spark-net:
     driver: bridge
