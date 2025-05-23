@@ -39,8 +39,8 @@ services:
       - type: bind
         source: ./spark_jobs
         target: /opt/spark/spark-jobs
-      - type: bind
-        source: ./data
+      - type: volume
+        source: spark-data
         target: /opt/spark/data
       - type: volume
         source: spark-logs
@@ -70,11 +70,13 @@ services:
           cpus: '1'
           memory: 2G
     entrypoint: ["start-worker.sh", "spark://spark-master:7077"]
+    depends_on:
+      - spark-master
     env_file:
       - ./docker/.env.spark
     volumes:
-      - type: bind
-        source: ./data
+      - type: volume
+        source: spark-data
         target: /opt/spark/data
       - type: volume
         source: spark-logs
@@ -101,7 +103,7 @@ services:
       - target: 18080
         published: 18080
         protocol: tcp
-        mode: ingress
+        mode: host
 
   spark-jupyter:
     image: minhtramnp/spark_image:v1
@@ -125,14 +127,14 @@ services:
       - type: volume
         source: spark-logs
         target: /opt/spark/spark-events
-      - type: bind
-        source: ./data
+      - type: volume
+        source: spark-data
         target: /opt/spark/data
     ports:
       - target: 8889
         published: 8889
         protocol: tcp
-        mode: ingress
+        mode: host
 
   spark-submit:
     image: minhtramnp/spark_image:v1
@@ -151,8 +153,8 @@ services:
       - type: bind
         source: ./spark_jobs
         target: /opt/spark/spark-jobs
-      - type: bind
-        source: ./data
+      - type: volume
+        source: spark-data
         target: /opt/spark/data
       - type: volume
         source: spark-logs
@@ -160,4 +162,4 @@ services:
 
 volumes:
   spark-logs:
-    driver: local
+  spark-data:
