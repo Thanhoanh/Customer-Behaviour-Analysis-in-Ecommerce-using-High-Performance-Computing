@@ -40,7 +40,7 @@ services:
     networks:
       - spark-net
 
-  spark-worker:
+  spark-worker1:
     user: root
     container_name: spark-worker1
     image: minhtramnp/spark_image:v1
@@ -57,7 +57,7 @@ services:
       - spark-net
 
   
-  spark-worker:
+  spark-worker1:
     user: root
     container_name: spark-worker2
     image: minhtramnp/spark_image:v1
