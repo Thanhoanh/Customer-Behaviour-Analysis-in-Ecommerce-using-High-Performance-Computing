@@ -85,7 +85,7 @@ services:
       - spark-master
     volumes:
       - ../spark_jobs:/opt/spark/spark-jobs
-      - ../data:/opt/spark/data/processed:rw
+      - ../data:/opt/spark/data:rw
       - spark-logs:/opt/spark/spark-events:rw
     command: ["tail", "-f", "/dev/null"]
     env_file:
