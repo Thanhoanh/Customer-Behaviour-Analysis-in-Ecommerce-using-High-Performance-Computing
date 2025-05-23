@@ -34,7 +34,7 @@ services:
       spark-master:
         condition: service_healthy
     env_file:
-      - ./docker/env.spark
+      - ./env.spark
     volumes:
       - spark-logs:/opt/spark/spark-events:rw
     ports:
