@@ -11,7 +11,7 @@ networks:
 
 services:
   spark-master:
-    image: catminh/docker-swarm-demo:cm1
+    image: minhtramnp/spark_image:v1
     networks:
       - spark-overlay-net
     deploy:
@@ -28,7 +28,7 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-    entrypoint: ['./entrypoint.sh', 'master']
+    entrypoint: ['./docker/entrypoint.sh', 'master']
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
       interval: 5s
@@ -58,7 +58,7 @@ services:
         mode: host
 
   spark-worker:
-    image: catminh/docker-swarm-demo:cm1
+    image: minhtramnp/spark_image:v1
     networks:
       - spark-overlay-net
     deploy:
