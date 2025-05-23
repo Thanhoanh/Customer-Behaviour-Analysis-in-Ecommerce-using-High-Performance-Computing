@@ -1,7 +1,7 @@
 pyarrow==16.1.0
 pyspark==3.5.1
 matplotlib
-sklearn
+scikit-learn
 jupyter
 numpy
 pandas
