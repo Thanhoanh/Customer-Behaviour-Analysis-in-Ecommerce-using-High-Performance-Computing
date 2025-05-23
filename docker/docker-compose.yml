@@ -71,7 +71,8 @@ services:
       - ../data:/opt/spark/data:rw
     environment:
       PYSPARK_PYTHON: python3
-    command: "jupyter notebook --no-browser --ip=0.0.0.0 --port=8889 --allow-root"
+    command: "jupyter notebook --notebook-dir=/opt/spark --no-browser --ip=0.0.0.0 --port=8889 --allow-root"
+
     env_file:
       - ./.env.spark
     networks:
