@@ -91,7 +91,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
     entrypoint: ["start-history-server.sh"]
     env_file:
       - ./docker/.env.spark
@@ -114,7 +114,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
     entrypoint: ["sh", "-c", "jupyter notebook --notebook-dir=/opt/spark --no-browser --ip=0.0.0.0 --port=8889 --allow-root"]
     env_file:
       - ./docker/.env.spark
@@ -145,7 +145,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == manager
+          - node.role == worker
     command: ["tail", "-f", "/dev/null"]
     env_file:
       - ./docker/.env.spark
