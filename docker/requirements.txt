@@ -3,5 +3,5 @@ pyspark==3.5.1
 matplotlib
 scikit-learn
 jupyter
-numpy
-pandas
+numpy==1.21.6
+pandas==1.5.3
