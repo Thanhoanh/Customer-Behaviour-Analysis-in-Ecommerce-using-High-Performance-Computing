@@ -15,7 +15,7 @@ docker build -t  <username>/<image_name>:<tag> .
 ## Testing
 We run Spark cluster in a testing environment configured in docker-compose.yml
 ```bash
-docker compose -f docker-compose.yml up
+docker compose -f docker-compose.yml up -d
 ```
 Check the running containers by running this command: 
 ```bash
