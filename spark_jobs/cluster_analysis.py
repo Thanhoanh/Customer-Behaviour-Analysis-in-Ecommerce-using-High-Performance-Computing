@@ -38,7 +38,7 @@ def main():
     spark = create_spark_session("ClusterAnalysis")
 
     # Load data và tính RFM
-    df = load_data(r"C:\Users\ASUS\Downloads\df_cleaned.csv", spark)
+    df = load_data(r"/opt/spark/data/processed/df_cleaned.csv", spark)
     rfm_df = compute_rfm(df)
     scaled_df = preprocess_features(rfm_df)
     best_k = find_best_k(scaled_df)
