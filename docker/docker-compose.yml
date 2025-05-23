@@ -12,7 +12,7 @@ services:
       timeout: 3s
       retries: 3
     volumes:
-      - ./spark-jobs:/opt/spark/spark_jobs:ro
+      - ./spark_jobs:/opt/spark/spark-jobs:ro
       - ./data:/opt/spark/data:rw
       - spark-logs:/opt/spark/spark-events:rw
     env_file:
@@ -83,7 +83,7 @@ services:
     depends_on:
       - spark-master
     volumes:
-      - ./spark-jobs:/opt/spark/spark_jobs
+      - ./spark_jobs:/opt/spark/spark_jobs
       - spark-logs:/opt/spark/spark-events:rw
     command: ["spark-submit", "/opt/spark/spark-jobs/cluster_analysis.py"]
     env_file:
