@@ -4,7 +4,7 @@ services:
   spark-master:
     user: root
     container_name: spark-master
-    image: tramminhnp/spark-image:v1
+    image: minhtramnp/spark-image:v1
     command: ["start-master.sh", "-p", "7077"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
@@ -26,7 +26,7 @@ services:
   spark-history-server:
     user: root
     container_name: spark-history
-    image: tramminhnp/spark-image:v1
+    image: minhtramnp/spark-image:v1
     command: ["start-history-server.sh"]
     depends_on:
       spark-master:
@@ -43,7 +43,7 @@ services:
   spark-worker:
     user: root
     container_name: spark-worker
-    image: tramminhnp/spark-image:v1
+    image: minhtramnp/spark-image:v1
     command: ["start-worker.sh", "spark://spark-master:7077"]
     depends_on:
       spark-master:
@@ -60,7 +60,7 @@ services:
     user: root
     # build: ./docker
     container_name: spark-jupyter
-    image: tramminhnp/spark-image:v1
+    image: minhtramnp/spark-image:v1
     depends_on:
       - spark-master
     ports:
@@ -80,7 +80,7 @@ services:
 
   spark-submit:
     user: root
-    image: tramminhnp/spark-image:v1
+    image: minhtramnp/spark-image:v1
     container_name: spark-submit
     depends_on:
       - spark-master
