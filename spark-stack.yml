@@ -148,7 +148,7 @@ services:
           - node.role == manager
     command: ["tail", "-f", "/dev/null"]
     env_file:
-      - ./.env.spark
+      - ./docker/.env.spark
     volumes:
       - type: bind
         source: ./spark_jobs
