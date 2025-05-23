@@ -18,7 +18,7 @@ def main():
     spark = create_spark_session("AnomalyDetection")
 
     # 1. Load và xử lý dữ liệu
-    df = load_data(r"C:\Users\ASUS\Downloads\df_cleaned.csv", spark)
+    df = load_data(r"data\processed\df_cleaned.csv", spark)
     rfm_df = compute_rfm(df)
     scaled_df = preprocess_features(rfm_df)
 
