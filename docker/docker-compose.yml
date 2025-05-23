@@ -87,7 +87,7 @@ services:
       - ../spark_jobs:/opt/spark/spark-jobs
       - ../data:/opt/spark/data/processed:rw
       - spark-logs:/opt/spark/spark-events:rw
-    command: command: ["tail", "-f", "/dev/null"]
+    command: ["tail", "-f", "/dev/null"]
     env_file:
       - ./.env.spark
     networks:
