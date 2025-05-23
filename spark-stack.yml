@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   spark-master:
-    image: bitnami/spark:3.5
+    image: bitnami/spark:3.3
     hostname: spark-master
     networks:
       - spark-net
@@ -27,7 +27,7 @@ services:
           - node.role == manager
 
   spark-worker:
-    image: bitnami/spark:3.5
+    image: bitnami/spark:3.3
     networks:
       - spark-net
     environment:
@@ -46,7 +46,7 @@ services:
       replicas: 2
 
   spark-history:
-    image: bitnami/spark:3.5
+    image: bitnami/spark:3.3
     hostname: spark-history
     networks:
       - spark-net
@@ -76,7 +76,7 @@ services:
       - spark-master
 
   spark-submit:
-    image: bitnami/spark:3.5
+    image: bitnami/spark:3.3
     networks:
       - spark-net
     environment:
