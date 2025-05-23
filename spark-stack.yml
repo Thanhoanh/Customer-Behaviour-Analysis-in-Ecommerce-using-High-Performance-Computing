@@ -1,120 +1,97 @@
-version: "3.8"
+version: '3.8'
 
-# --------------------------
-# Networks Configuration
-# --------------------------
-networks:
-  spark-net:
-    driver: overlay
-    attachable: true
-    ipam:
-      config:
-        - subnet: 10.10.10.0/24
-
-# --------------------------
-# Volumes Configuration
-# --------------------------
-volumes:
-  spark-logs:
-    driver: local
-  spark-data:
-    driver: local
-  spark-jobs:
-    driver: local
-
-# --------------------------
-# Services Configuration
-# --------------------------
 services:
   spark-master:
-    image: minhtramnp/spark_image:v1
+    image: bitnami/spark:3.5
+    hostname: spark-master
     networks:
       - spark-net
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_DAEMON_USER=root
+      - SPARK_EVENTLOG_ENABLED=yes
+      - SPARK_EVENTLOG_DIR=/tmp/spark-events
+    volumes:
+      - spark-events:/tmp/spark-events
+    ports:
+      - "7077:7077"
+      - "8080:8080"
     deploy:
-      mode: replicated
       replicas: 1
       placement:
         constraints:
           - node.role == manager
-      resources:
-        limits:
-          cpus: '2'
-          memory: 8G
-        reservations:
-          cpus: '0.5'
-          memory: 2G
-      restart_policy:
-        condition: on-failure
-        max_attempts: 3
-    environment:
-      SPARK_MASTER_HOST: spark-master
-      SPARK_LOCAL_IP: "{{.Task.Hostname}}"
-      SPARK_PUBLIC_DNS: "{{.Task.Hostname}}"
-    volumes:
-      - spark-jobs:/opt/spark/jobs:ro
-      - spark-data:/opt/spark/data:rw
-      - spark-logs:/opt/spark/logs:rw
-    ports:
-      - target: 7077
-        published: 7077
-        protocol: tcp
-        mode: host
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: host
-    command: ["start-master.sh"]
 
   spark-worker:
-    image: minhtramnp/spark_image:v1
+    image: bitnami/spark:3.5
     networks:
       - spark-net
-    deploy:
-      mode: replicated
-      replicas: 3
-      placement:
-        constraints:
-          - node.role == worker
-      resources:
-        limits:
-          cpus: '1'
-          memory: 4G
-        reservations:
-          cpus: '0.3'
-          memory: 1G
     environment:
-      SPARK_WORKER_CORES: 1
-      SPARK_WORKER_MEMORY: 4g
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_WEBUI_PORT=8081
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_DAEMON_USER=root
+      - SPARK_EVENTLOG_ENABLED=yes
+      - SPARK_EVENTLOG_DIR=/tmp/spark-events
     volumes:
-      - spark-data:/opt/spark/data:rw
-      - spark-logs:/opt/spark/logs:rw
-    command: ["start-worker.sh", "spark://spark-master:7077"]
+      - spark-events:/tmp/spark-events
+    depends_on:
+      - spark-master
+    deploy:
+      replicas: 2
 
   spark-history:
-    image: minhtramnp/spark_image:v1
+    image: bitnami/spark:3.5
+    hostname: spark-history
     networks:
       - spark-net
-    deploy:
-      mode: replicated
-      replicas: 1
+    environment:
+      - SPARK_MODE=history
+      - SPARK_HISTORY_OPTS=-Dspark.history.fs.logDirectory=/tmp/spark-events
     volumes:
-      - spark-logs:/opt/spark/logs:ro
+      - spark-events:/tmp/spark-events
     ports:
-      - target: 18080
-        published: 18080
-        protocol: tcp
-        mode: host
-    command: ["start-history-server.sh"]
+      - "18080:18080"
+    depends_on:
+      - spark-master
 
-# --------------------------
-# Các lệnh triển khai
-# --------------------------
-# 1. Khởi tạo Swarm (trên manager node):
-#    docker swarm init --advertise-addr <MANAGER-IP>
+  spark-jupyter:
+    image: jupyter/all-spark-notebook:latest
+    hostname: spark-jupyter
+    networks:
+      - spark-net
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - JUPYTER_TOKEN=password
+    volumes:
+      - jupyter-data:/home/jovyan/work
+    ports:
+      - "8888:8888"
+    depends_on:
+      - spark-master
 
-# 2. Triển khai stack:
-#    docker stack deploy -c spark-stack.yml spark-cluster
+  spark-submit:
+    image: bitnami/spark:3.5
+    networks:
+      - spark-net
+    environment:
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    volumes:
+      - submit-apps:/app
+    command: sleep infinity
+    depends_on:
+      - spark-master
 
-# 3. Kiểm tra trạng thái:
-#    docker service ls
-#    docker service logs spark-cluster_spark-master
+volumes:
+  spark-events:
+  jupyter-data:
+  submit-apps:
+
+networks:
+  spark-net:
+    driver: overlay
