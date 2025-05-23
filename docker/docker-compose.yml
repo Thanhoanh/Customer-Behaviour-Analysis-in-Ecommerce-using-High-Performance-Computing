@@ -87,8 +87,8 @@ services:
       - ../spark-jobs:/opt/spark/spark-jobs
       - spark-logs:/opt/spark/spark-events:rw
     command: ["spark-submit", "/opt/spark/spark-jobs/cluster_analysis.py"]
-    environment:
-      PYSPARK_DRIVER_PYTHON: python3
+    env_files:
+      - .env.spark
     networks:
       - spark-net
       
