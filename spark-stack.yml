@@ -21,7 +21,7 @@ services:
           - node.role == manager
       resources:
         limits:
-          cpus: '2'
+          cpus: '1'
           memory: 4G
       restart_policy:
         condition: on-failure
