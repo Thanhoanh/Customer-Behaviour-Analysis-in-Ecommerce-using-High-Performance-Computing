@@ -49,11 +49,11 @@ services:
       - target: 8080
         published: 8080
         protocol: tcp
-        mode: host
+        mode: ingress
       - target: 7077
         published: 7077
         protocol: tcp
-        mode: host
+        mode: ingress
 
   spark-worker:
     image: minhtramnp/spark_image:v1
@@ -89,7 +89,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == worker
+          - node.role == manager
     entrypoint: ["start-history-server.sh"]
     env_file:
       - ./docker/.env.spark
@@ -101,7 +101,7 @@ services:
       - target: 18080
         published: 18080
         protocol: tcp
-        mode: host
+        mode: ingress
 
   spark-jupyter:
     image: minhtramnp/spark_image:v1
@@ -112,7 +112,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == worker
+          - node.role == manager
     entrypoint: ["sh", "-c", "jupyter notebook --notebook-dir=/opt/spark --no-browser --ip=0.0.0.0 --port=8889 --allow-root"]
     env_file:
       - ./docker/.env.spark
@@ -132,7 +132,7 @@ services:
       - target: 8889
         published: 8889
         protocol: tcp
-        mode: host
+        mode: ingress
 
   spark-submit:
     image: minhtramnp/spark_image:v1
@@ -143,7 +143,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == worker
+          - node.role == manager
     command: ["tail", "-f", "/dev/null"]
     env_file:
       - ./docker/.env.spark
