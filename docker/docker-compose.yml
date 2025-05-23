@@ -40,9 +40,9 @@ services:
     networks:
       - spark-net
 
-  spark-worker1:
+  spark-worker:
     user: root
-    container_name: spark-worker
+    container_name: spark-worker1
     image: minhtramnp/spark_image:v1
     command: ["start-worker.sh", "spark://spark-master:7077"]
     depends_on:
@@ -57,9 +57,9 @@ services:
       - spark-net
 
   
-  spark-worker2:
+  spark-worker:
     user: root
-    container_name: spark-worker
+    container_name: spark-worker2
     image: minhtramnp/spark_image:v1
     command: ["start-worker.sh", "spark://spark-master:7077"]
     depends_on:
