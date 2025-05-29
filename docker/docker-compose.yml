@@ -72,6 +72,22 @@ services:
       - spark-logs:/opt/spark/spark-events:rw
     networks:
       - spark-net
+
+  spark-worker3:
+    user: root
+    container_name: spark-worker3
+    image: minhtramnp/spark_image:v1
+    command: ["start-worker.sh", "spark://spark-master:7077"]
+    depends_on:
+      spark-master:
+        condition: service_healthy
+    env_file:
+      - ./.env.spark
+    volumes:
+      - ../data:/opt/spark/data:rw
+      - spark-logs:/opt/spark/spark-events:rw
+    networks:
+      - spark-net
       
   spark-jupyter:
     user: root
